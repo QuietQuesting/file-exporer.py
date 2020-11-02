@@ -13,9 +13,8 @@ import mimetypes
 import shutil
 from platform import system
 from hashlib import sha1
-from send2trash import send2trash
 import configparser
-
+from send2trash import send2trash
 
 def read_argv() -> str:
     """ Reads and returns sys.argv.
@@ -73,7 +72,7 @@ def print_dir(folder=os.getcwd()) ->None:
     #get parent dir as a string
     last_slash = folder.rfind('\\')
     if last_slash != -1:
-    parent_dir = folder[:last_slash]
+        parent_dir = folder[:last_slash]
 
     else:
         raise OSError('Can\'t go back up!')
@@ -125,8 +124,7 @@ def input_num(number=-1)-> int:
         elif number in ('..', '.'):
             return -2
 
-        else:
-            print('Number out of range! Input number between 1 - {}.'.format(len(dir_list)))
+        print('Number out of range! Input number between 1 - {}.'.format(len(dir_list)))
 
     return number
 
@@ -140,7 +138,7 @@ def fselect(count=1) ->list[str]:
     selection = []
 
     print(f'Please select {count} folder or files, one after the other')
-    for i in range(count):
+    for _ in range(count):
 
         selected = False
 
@@ -166,7 +164,7 @@ def fselect(count=1) ->list[str]:
                 file_name = dir_list[num-1] # file or folder
                 f_path = os.getcwd() + '\\' + file_name
 
-                if os.path.isfile(file):
+                if os.path.isfile(f_path):
                     choice = input(f'Do you want to select {file_name}? (y,n)')
 
                     if choice.replace(' ', '').lower() in ('y', 'yes', 'yeah'):
@@ -188,7 +186,7 @@ def fopen(number, directory=os.getcwd()) -> bool:
     """Opens n-st file in directory.
         Todo: test if symlinks (.lnk) open"""
 
-    path = directory + '\\' + os.listdir(directory)number-1]
+    path = directory + '\\' + os.listdir()[number-1]
 
     if os.path.isfile(path):
         return True
