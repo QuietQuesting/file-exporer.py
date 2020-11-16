@@ -6,7 +6,7 @@ import shutil
 import send2trash
 
 
-def main(items: list[str]):
+def main(items: list[str]) -> None:
     """Main flow for deleting files and folders."""
     permission_direct_delete, ask_for_each_file = get_user_preference()
     deleted_files = not_deleted_files = []
@@ -29,6 +29,11 @@ def main(items: list[str]):
             deleted_files.append(item)
         else:
             not_deleted_files.append(item)
+
+    print("Finished! Successfully deleted:", *deleted_files, sep='\n')
+    print("\nFailed to delete:", *not_deleted_files, sep='\n')
+
+    return None
 
 
 def get_user_preference() -> tuple[bool, bool]:
