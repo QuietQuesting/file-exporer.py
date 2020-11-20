@@ -4,14 +4,12 @@
 
 This is a simple comandline file exporer script for windows :desktop_computer::notebook_with_decorative_cover: written in Python 3.9
 
-### Functions:
-	- Traverse through you computers files as you wish with classical comandline interface and intuitve text control
-	- High level file operations such as: Copy, move, delete files and folders ~~ as well as Create Folders ~~ (not yet)
-	- Function which prompts user to select x amount of files/dirs (which I will use for other projects) 
-	Within Config file and while using the application:
-		- Changable standart diretory 
-		- ~~ Create, use and delete Quick Access Points ~~ (not yet)
-	Startparameter: start directory (prioritized over config)
+### Features:
+- Traverse through you computers files as you wish with classical comandline interface and intuitve text control
+- High level file operations such as: Copy, move, delete files and folders
+- Function which prompts user to select x amount of files/dirs (which I will use for other projects) 
+- Default start directory with config.ini and custom start directory as start parameter
+
 	
 ### Warnings:
 ##### Using this as a replacement for the Windows explorer or cmd is not recommended.
@@ -24,16 +22,13 @@ The delete function moves, if possible files to the paper bin. In case that is n
 Thanks for reading.
 
 
-
-
-Additional things I want to add:
-- [ ] Full functionality
+ToDo:
+- [ ] Write Copy and move function 
 - [ ] Quick Access Points
-- [ ] Test in linux
+- [ ] Fix inconsistency with '/' and '\\' in paths. Leads easily to errors. 
 - [ ] Write Unittest
 - [ ] Create Folders
-- [ ] Better sys.argv usage / options
-- [ ] write function when imported to promt user to choose file
+- [ ] Error testing
 
 <div>The Icons made from <a href="http://www.onlinewebfonts.com/icon">Icon Fonts</a> are licensed by CC BY 3.0</div>
 The Icons along with the text are combined and colored by me!
