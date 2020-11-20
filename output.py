@@ -37,12 +37,11 @@ def print_dir(folder: str) -> None:
     intro = '\nContent of folder: {}'.format(folder)
 
     # get parent dir as a string
-    last_slash = folder.rfind('\\')
-    if last_slash == -1:
-        last_slash = folder.rfind('/')
-
-    if last_slash == -1:3
-        raise OSError('Can\'t go back up!')
+    last_slash = folder.rfind('/')
+    if not last_slash:
+        last_slash = folder.rfind('\\')
+        if not last_slash:
+            raise OSError("Can't go back up!")
 
     parent_dir = folder[:last_slash]
 
@@ -52,7 +51,7 @@ def print_dir(folder: str) -> None:
     print(f'| ...\tparent folder:\t{parent_dir:30}')
 
     for index, item in enumerate(os.listdir(folder)):
-        path = folder + '//' + item
+        path = folder + '/' + item
 
         if item[-4:] == '.lnk':
             _type = 'link/shortcut'

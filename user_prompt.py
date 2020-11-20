@@ -6,35 +6,64 @@ import output
 from typing import Union
 
 
-def input_folder_num(number: int = -1) -> int:
+class GetNum:
+    default_num = 0
+    default_range = (1, 10)  # range includes 0 and 10
+
+    def __init__(self, number_range=None, number=None):
+        """ Prompts user to input a number within num_range()"""
+        self.num_range = number_range
+        self.num = number
+
+        if not self.num_range_okay():
+            self.num_range = GetNum.default_range
+
+        if not self.num_okay():
+            self.num = GetNum.default_num
+
+    def in_range(self):
+        while not self.condition():
+
+            self.num = input('Enter your number now: ')
+            try:
+                self.num = int(self.num)
+                if not self.condition():
+                    print('Number out of range! Input number within 1 - {}.'.format(self.num_range[1]))
+
+            except TypeError:
+                print("Not a num.")
+
+        return self.num
+
+    def num_okay(self) -> bool:
+        """Checks if num is okay. Value not important gets fixed later."""
+        if not isinstance(self.num, int):
+            return False
+        return True
+
+    def num_range_okay(self) -> bool:
+        if isinstance(self.num_range, tuple) and len(self.num_range) == 2:
+            for item in self.num_range:
+                if not isinstance(item, int):
+                    return False
+
+            if self.num_range[0] < self.num_range[1]:
+                return True
+
+        return False
+
+    def condition(self) -> bool:
+        return self.num_range[0] <= self.num <= self.num_range[1]
+
+
+def input_folder_num(number: int = 0) -> int:
     """ Accepts numbers within range of cwd.
     Special nums: 0 counts as abort. -1 as confirm."""
-    dir_list = os.listdir(os.getcwd())
-
     if not isinstance(number, int):
-        number = -1
+        number = 0
+    folder_range = (1, len(os.listdir(os.getcwd())))
 
-    while not -1 < number <= len(dir_list):
-
-        number = input('Enter your number now: ')
-
-        if not number.isdecimal():
-
-            if number == '':
-                return -1
-
-            elif number in ('..', '.'):
-                return -2
-
-            else:
-                print('That is not a number nor a valid command.')
-                number = -1
-
-        else:
-            if not -1 < int(number) <= len(dir_list):
-                print('Number out of range! Input number between 1 - {}.'.format(len(dir_list)))
-
-    return number
+    return GetNum(folder_range, number).in_range()
 
 
 def input_amount(min_num: int = 1) -> int:
@@ -43,18 +72,11 @@ def input_amount(min_num: int = 1) -> int:
     if not isinstance(min_num, int) or min_num < 1:
         min_num = 1
 
-    number = input("How many files or folders?")
-    while True:
-        try:
-            number = int(input("Please input a number bigger than {}.".format(min_num)))
+    amount_range = (min_num, 100)
 
-        except ValueError:
-            pass
+    print("How many files or folders?")
 
-        if min_num <= int(number):
-            break
-
-    return number
+    return GetNum(amount_range).in_range()
 
 
 def select(count: int = 1) -> Union[list[str], bool]:
@@ -86,14 +108,14 @@ def select(count: int = 1) -> Union[list[str], bool]:
                 selected = True
 
             elif num == -2:
-                os.chdir('../')  # change to parent dir
-                output.print_dir('../')  # parent dir
+                os.chdir('..\\')  # change to parent dir
+                output.print_dir('..\\')  # parent dir
                 print("Going to parent folder.")
 
             else:   # open folder / ask if user wants to select this file
                 dir_list = os.listdir(os.getcwd())
                 file_name = dir_list[num-1]  # file or folder
-                f_path = os.getcwd() + '/' + file_name
+                f_path = os.getcwd() + '\\' + file_name
 
                 if os.path.isfile(f_path):
                     choice = input('Do you want to select {}? (y, yes)'.format(file_name))

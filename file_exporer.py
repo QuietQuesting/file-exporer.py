@@ -75,7 +75,7 @@ def open_folder(folder: str) -> None:
 
 def main() -> None:
     """ Main script flow of the file explorer.
-    In case you want to prompt the user to choose a folder/file use fselect. """
+    In case you want to prompt the user to choose a folder/file use select. """
     config = init_config()
     set_starting_dir(config)
     output.print_intro()
@@ -87,17 +87,19 @@ def main() -> None:
 
         if option.isdecimal():
             option = int(option)
-            dir_list = os.listdir(os.getcwd())
+            path = os.getcwd()
+            dir_list = os.listdir(path)
             name = dir_list[option - 1]
+            path += '/' + name
 
             if os.path.isdir(dir_list[option-1]):
 
                 print('Opening folder: {}'.format(name))
-                open_folder(name)
+                open_folder(path)
 
             else:
                 print('Opening file: \n')
-                run_file(name)
+                run_file(path)
 
         elif option in ('.', '..'):
             print('Opening parent folder.')
