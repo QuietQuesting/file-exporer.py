@@ -9,40 +9,23 @@
 
 import sys
 import os
+import pathlib
 from typing import Union
 import configparser
 import output
 import user_prompt
 import file_transport
-import delete
 
 
-def get_argv1() -> Union[str, None]:
-    """ Reads sys.argv[1] and returns it """
-    try:
-        argv = sys.argv[1]
-        
-    except IndexError:
-        argv = None
-
-    return argv
-
-
-def init_config(name='config.ini') -> str:
+def init_config(config_file='config.ini') -> str:
     """initializes configparser object with consideration of sys.argv"""
     config = configparser.ConfigParser()
-    config_file = get_argv1()
-    
-    if config_file and os.path.isfile(config_file):
-        config.read(config_file)
-        
-    else:
-        config.read(name)
+    config.read(config_file)
         
     return config
 
 
-def set_starting_dir(config) -> bool:
+def set_starting_dir(config):
     """ Looks for starting directory in config requires returned class from init_config
     Returns directory or else an empty string.
     Using $USERNAME in config doesn't work. os.getlogin() to get username executing the script"""
@@ -58,87 +41,35 @@ def set_starting_dir(config) -> bool:
         return False
 
     os.chdir(starting_dir)
-    return True
-
-
-def run_file(file: str):
-    """Executes runs file"""
-    pass
-
-
-def open_folder(folder: str) -> None:
-    """Changes cwd to folder. Prints content of new folder."""
-    os.chdir(folder)  # change to parent dir
-    output.print_dir(folder)
-    return None
 
 
 def main() -> None:
     """ Main script flow of the file explorer.
-    In case you want to prompt the user to choose a folder/file use select. """
+    In case you want to prompt the user to choose a folder/file use fselect. """
     config = init_config()
     set_starting_dir(config)
     output.print_intro()
 
     running = True
     while running:
-        option = input('\nEnter option: ')
-        option = option.replace(' ', '').lower()
+        option = user_prompt.input_folder_num()
 
-        if option.isdecimal():
-            option = int(option)
-            path = os.getcwd()
-            dir_list = os.listdir(path)
-            name = dir_list[option - 1]
-            path += '/' + name
+        if option != -1:
 
-            if os.path.isdir(dir_list[option-1]):
+            directory = pathlib.Path(os.getcwd())
 
-                print('Opening folder: {}'.format(name))
-                open_folder(path)
+            # open parent and continue next loop
+            if option == 0:
+                user_prompt.select_option(directory.parent)
 
             else:
-                print('Opening file: \n')
-                run_file(path)
+                user_prompt.select_option(pathlib.Path(os.getcwd()[option - 1]))
 
-        elif option in ('.', '..'):
-            print('Opening parent folder.')
-            open_folder('../')
-
-        elif option in ('copy', 'c'):
-            print('Option: copy file or folder:\n')
-
-            selected = user_prompt.select()
-            if not selected:  # User aborted process
-                continue
-
-            print('selected: {}'.format(selected))
-
-        elif option in ('move', 'm'):
-            print('Option: move file or folder:\n')
-            selected = user_prompt.select()
-            if not selected:  # User aborted process
-                continue
-
-            print('selected: {}'.format(selected))
-
-        elif option in ('del', 'd'):
-            print('Option: delete file or folder:\n')
-            selected = user_prompt.select()
-            if not selected:  # User aborted process
-                continue
-
-            print('selected: {}'.format(selected))
-
-            delete.main(selected)
-
-        elif option == 'help':
-            output.print_options()
-
-        elif option == 'exit':
-            break
         else:
-            print('Nothing.')
+            print("Didn't select a folder.")
+            choice = input("Do you want to exit? (y)")
+            if choice.lower() == "y":
+                break
 
     return None
 
