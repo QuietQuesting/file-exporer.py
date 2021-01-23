@@ -2,7 +2,8 @@
 """Output functions for file_explorer.py"""
 
 import os
-import mimetypes
+from item_operations import get_mimetype
+import pathlib
 
 
 def print_intro() -> None:
@@ -11,61 +12,54 @@ def print_intro() -> None:
     print('===========================',
           'Welcome to my file explorer!',
           '===========================',
-          'Please choose one of the following options:\n', sep='\n')
+          '\n', sep='\n')
 
-    print_options(intro=True)
-    print_dir(os.getcwd())
-    return None
+    print('Enter number to open associated item. An item is either a file, folder, or a shortcut.',
+          'You can also select multiple items, by doing an multiselect, eg.:',
+          'enter 2-4 to get all items within the range (in this case 2,3,4) for separate items you can use comma',
+          '2,4 will get you the values 2 and 4, you can also combine both ways like this 2-4, 6, leading to 2,3,4,6.',
+          '\n', sep='\n')
 
+    print('Then you can choose on of the following options for your item/s:')
+    for item in option_list():
+        print(item, sep='\n')
 
-def print_options(intro: bool = False) -> None:
-    """ Prints all current options user can use."""
-    if not intro:
-        print('\nYou can choose following options:\n')
-
-    print('Enter number to open associated folder or file.',
-          'Enter ".." to open parent folder.',
-          'co / copy to copy file/folder',
-          'm / move to crop file/folders',
-          'del to move file/folders folders to paper bin',
-          'or delete directly if not possible.', sep='\n')
-    return None
+    print()
+    print_dir()
 
 
-def print_dir(folder: str) -> None:
+def print_help() -> None:
+    for item in option_list():
+        print(item, sep=" - ")
+
+
+def option_list() -> list:
+    """Returns what user can do."""
+    return [' (o) to open item', ' (c) to copy item', ' (m) to move item', ' (p) to paste selected item',
+            ' (d) to delete item to to paper bin', ' (r) to rename item',
+            '(nf) to create new folder', '(nd) to create new directory']
+
+
+def print_dir(folder: str = os.getcwd()) -> None:
     """Fancy prints directory and it's content."""
-    intro = '\nContent of folder: {}'.format(folder)
+    intro = f'\nContent of folder: {folder}'
 
     # get parent dir as a string
-    last_slash = folder.rfind('/')
-    if not last_slash:
-        last_slash = folder.rfind('\\')
-        if not last_slash:
-            raise OSError("Can't go back up!")
-
-    parent_dir = folder[:last_slash]
+    folder = pathlib.Path(folder)
+    parent_dir = folder.parent
 
     print(intro)
     print('o', len(intro) * '-', sep='')
 
-    print(f'| ...\tparent folder:\t{parent_dir:30}')
+    print(f'| 0 \tparent folder:\t{str(parent_dir):30}')
 
     for index, item in enumerate(os.listdir(folder)):
-        path = folder + '/' + item
+        path = folder / item  # thanks to pathlib
 
-        if item[-4:] == '.lnk':
-            _type = 'link/shortcut'
+        mimetype = get_mimetype(path.name)
 
-        elif os.path.isfile(path):
-            # Get Mimetype as tuple, want only first tuple item
-            _type = mimetypes.guess_type(path, strict=False)[0]
-
-            if _type is None:
-                _type = 'unknown/uncommon'
-
-        else:
-            _type = 'dir/folder'
-
-        print(f'| {index+1:02}.\t{item:20}{_type}')
+        print(f'| {index + 1:02}.\t{item:20}{mimetype}')
 
     return None
+
+

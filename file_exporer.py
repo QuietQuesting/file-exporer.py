@@ -3,18 +3,14 @@
         - bulk renaming of files
         - automatic file sorting routines
         
-        Arguments:
-1st: Optional path of config.ini"""
+"""
 
-
-import sys
 import os
 import pathlib
-from typing import Union
+
 import configparser
 import output
 import user_prompt
-import file_transport
 
 
 def init_config(config_file='config.ini') -> str:
@@ -45,28 +41,31 @@ def set_starting_dir(config):
 
 def main() -> None:
     """ Main script flow of the file explorer.
-    In case you want to prompt the user to choose a folder/file use fselect. """
+    In case you want to prompt the user to choose a folder/file use. """
     config = init_config()
     set_starting_dir(config)
     output.print_intro()
 
-    running = True
-    while running:
-        option = user_prompt.input_folder_num()
+    option_inst = user_prompt.Options()
 
-        if option != -1:
+    while True:
+        user_input = user_prompt.input_folder_num()
+
+        if user_input[0] != -1:
 
             directory = pathlib.Path(os.getcwd())
 
             # open parent and continue next loop
-            if option == 0:
-                user_prompt.select_option(directory.parent)
+            if len(user_input) == 1 and user_input[0] == 0:
+                option_inst.select(directory.parent)
 
             else:
-                user_prompt.select_option(pathlib.Path(os.getcwd()[option - 1]))
+                # turns selected indexes to Path objects
+                paths = [pathlib.Path(os.listdir(directory)[item-1]) for item in user_input]
+                option_inst.select(paths)
 
         else:
-            print("Didn't select a folder.")
+            print("You didn't select a folder.", end=' ')
             choice = input("Do you want to exit? (y)")
             if choice.lower() == "y":
                 break
