@@ -2,11 +2,10 @@
 
 ![banner](https://user-images.githubusercontent.com/73032440/97810544-eba25300-1c74-11eb-87ed-7de2b34c0a55.png)
 
-<del>as well as Create Folders</del>
-
 ### Features:
 - Traverse through you computers files as you wish with a classical comand line interface and intuitve text control
-- High level file operations such as: Create, Copy, move, delete files and folders
+- High level file operations such as: create, copy, move, move to bin, direct delete for files and folders
+- Single and easy multiple select
 - Function which prompts user to select x amount of files / directories 
 - Config file for start directory and quick access points
 
@@ -20,16 +19,17 @@ The delete function moves, if possible files to the paper bin. In case that is n
 
 Thanks for reading.
 
-
 ToDo:
-- [ ] Copy
-- [ ] Move
-- [ ] Create
+- [x] Copy
+- [x] Move
+- [x] Create
 - [x] Delete  
 - [ ] Quick Access Points
-- [x] Fix inconsistency with '/' and '\\' in paths. Leads easily to errors. 
+- [x] Fix inconsistency with '/' and '\\' in paths
+- [ ] Stop bugs going brrrrrr
+- [ ] Do manual testing
 - [ ] Write Tests
-- [ ] Create Folders
+- [ ] Standalone select function / class
 
 <div>The Icons made from <a href="http://www.onlinewebfonts.com/icon">Icon Fonts</a> are licensed by CC BY 3.0</div>
 The Icons along with the text are combined and colored by me!
