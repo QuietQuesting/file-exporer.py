@@ -2,10 +2,9 @@
 """Input functions for file_explorer.py"""
 
 import os
-
-from output import print_help
-import item_operations
 import easy_multiple_select
+import item_operations
+from output import print_help
 
 
 def input_folder_num(number: int = -1) -> tuple:
@@ -75,10 +74,10 @@ class Options:
     def paste(self, destination):
         """pastes all saved items to the destination and clears """
         if self.clipboard["copy"]:
-            item_operations.Copy(self.remove_duplicates(self.clipboard["copy"]), destination)
+            item_operations.Copy(self.clipboard["copy"], destination)
 
         if self.clipboard["move"]:
-            item_operations.Move(self.remove_duplicates(self.clipboard["move"]), destination)
+            item_operations.Move(self.clipboard["move"], destination)
 
         self.clear_clipboard()
 
@@ -90,33 +89,43 @@ class Options:
     def remove_duplicates(x: list) -> list:
         return list(dict.fromkeys(x))
 
+    @staticmethod
+    def Path_to_string(x):
+        if isinstance(x, str):
+            x = [x]
+        return [str(i) for i in x]
+
     def select(self, paths):
         """
         Select option of what to do with the file and run the associated function/class
-
+        Some operations didn't work with pathlib.Path Object.
+        My solution for now is a list comprehension which turns them back into string.
         :param: paths as a path
+
         """
-        paths = self.remove_duplicates(paths)
+        # paths = self.remove_duplicates(paths)
         option = input("Please choose an option for the item: ").lower()
 
+        print()
         while True:
 
-            if option == "o":
+            if option == "o":                       # Didn't work
                 print('Option: open item\\s')
+                paths = self.Path_to_string(paths)
                 item_operations.Open(paths)
                 break
 
-            elif option == 'c':
+            elif option == 'c':                     # Did work
                 print('Option: copy item\\s\n')
                 self.copy(paths)
                 break
 
-            elif option == 'm':
+            elif option == 'm':                     # Did work
                 print('Option: move item\\s\n')
                 self.move(paths)
                 break
 
-            elif option == 'p':
+            elif option == 'p':                     # Did work
                 print('Option: paste item\\s \n')
                 if not len(paths) > 1:
                     self.paste(paths[0])
@@ -124,22 +133,24 @@ class Options:
                     print("Can't paste to multiple places.")
                 break
 
-            elif option == 'd':
+            elif option == 'd':                     # Didn't work / work only strange
                 print('Option: delete item\\s\n')
+                paths = self.Path_to_string(paths)
                 item_operations.Delete(paths)
 
-            elif option == 'nf':
+            elif option == 'nf':                    # Didn't work
                 print('Option: create new file in directory\\s\n')
-                item_operations.Create(paths, "folder")
+                item_operations.Create(paths, "file")
                 break
 
-            elif option == 'nd':
+            elif option == 'nd':                    # Didn't work
                 print('Option: create new subdirectory\\s\n')
                 item_operations.Create(paths, "sub directory")
                 break
 
             elif option == 's':
                 print('Option: search item\\s\n')
+                print('Simulating search...')
                 break
 
             elif option == 'e':
@@ -155,5 +166,3 @@ class Options:
             else:
                 print("Unknown command. Enter option (h) to get list of commands (e) for exit option selecting.")
                 option = input("Please choose an option for the item: ").lower()
-
-

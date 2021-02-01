@@ -5,29 +5,27 @@ import os
 import pathlib
 import shutil
 import mimetypes
+import subprocess
 from typing import Union
+
 import LnkParse3
 import send2trash
+
 import output
 
 
 class Copy:
-    """Saves paths for"""
+    """Copy items to the destinations given. items must be """
 
-    def __init__(self, items: list, dest):
+    def __init__(self, items: list[Union[os.PathLike, pathlib.Path]], dest: str):
         if isinstance(items, str):
             self.items = [items]
         self.items = items
         self.follow_sym = True
         self.paste(dest)
 
-    def append(self, item):
-        if isinstance(item, str):
-            self.items.append(item)
-        else:
-            raise TypeError(f"Can only append a string, not {type(item)}.")
-
     def paste(self, dest):
+        """Not used rn."""
         for item in self.items:
             if os.path.isfile(item):
                 shutil.copy2(item, dest, follow_symlinks=self.follow_sym)
@@ -44,7 +42,7 @@ class Move(Copy):
             if os.path.isfile(item):
                 shutil.copy2(item, destination, follow_symlinks=self.follow_sym)
             else:
-                shutil.copytree(item, destination, self.follow_sym)
+                shutil.copytree(item, destination, ignore_dangling_symlinks=True, dirs_exist_ok=True)
 
         Delete(self.items)
 
@@ -62,8 +60,9 @@ class Delete:
             items = [items]
 
         for item in items:
+
+            self.item = str(item)
             success = self.move2bin()
-            self.item = item
 
             if not success:
 
@@ -91,14 +90,14 @@ class Delete:
         """General user decision to give permission to delete files directly. Option to ask for every file."""
         print("Moving items to paper bin is on some systems not possible (Linux, BSD, etc.).",
               "Choose yes to decide for all files or each individually.", sep='\n')
-        permission = input("\nCan I directly delete files in case they can't be moved to bin? (y or yes)")
+        permission = input("\nDelete files directly in case they can't be moved to bin? (y)")
 
-        if permission.replace(' ', '').lower() in ('y', 'yes'):
+        if permission.replace(' ', '').lower() == 'y':
             permission = True
 
-            ask_again = input('\nAsk again for every file? (y or yes)')
+            ask_again = input('\nAsk again for every file? (y)')
 
-            if ask_again.replace(' ', '').lower() in ('y', 'yes'):
+            if ask_again.replace(' ', '').lower() == 'y':
                 ask_again = True
 
             else:
@@ -215,7 +214,7 @@ class Open:
                 self.open_item([path])
 
             elif path.name[:-4] == ".url":
-                pass
+                self.open_file(path)
 
             else:
                 self.open_file(path)
@@ -223,7 +222,8 @@ class Open:
     @staticmethod
     def open_file(file: Union[os.PathLike, str, pathlib.Path]) -> None:
         """Executes file"""
-        print(f"simulating {file} opening.")
+        file = f"'{str(file)}'"
+        subprocess.run([file])
 
     @staticmethod
     def open_folder(folder: Union[os.PathLike, str, pathlib.Path]) -> None:
@@ -254,7 +254,7 @@ class Create:
         @param item_type: must bei either "folder" or "sub directory"
         """
         item_type = item_type.lower()
-        if item_type not in ("folder", "sub directory"):
+        if item_type not in ("file", "sub directory"):
             raise TypeError(f"Can't create {item_type}, only folder or sub directory.")
 
         if len(items) > 1:
@@ -264,14 +264,14 @@ class Create:
 
         self.item_type = item_type
 
-        name = self.get_first_name()
+        name = self.get_first_name(items[0])
         amount = 0
 
         for item in items:
             # Can't make a folder within a file. Skip to next one
-            if not os.path.isdir(item):
-                continue
             self.item = item
+            if not os.path.isdir(self.item):
+                continue
 
             if ask_again:
                 name = self.get_next_name()
@@ -282,6 +282,7 @@ class Create:
                 amount += 1
 
         self.success_rate = amount / len(items)
+        print("Done.\n")
 
     def get_ask_again_choice(self) -> bool:
         """General user decision ask for a name for every item."""
@@ -296,11 +297,11 @@ class Create:
     def create_item(self, name) -> bool:
         """Calls the create function for the associated type"""
 
-        if self.item_type == "folder":
-            return self.create_folder(name)
+        if self.item_type == "file":
+            return self.create_file(name)
 
         else:
-            return self.create_file(name)
+            return self.create_folder(name)
 
     def create_file(self, name) -> bool:
         try:
@@ -320,13 +321,13 @@ class Create:
             return False
         return True
 
-    def get_first_name(self):
+    def get_first_name(self, parent):
         """Ask for the first name and returns it"""
-        name = input(f"Enter the first name for {self.item_type} with in {self.item.parent}:")
+        name = input(f"Enter the first name for {self.item_type} with in {parent}:")
 
         while not self.name_ok(name):
             print('Following characters are not allowed \\ / : * " ? < > |')
-            name = input(f"Enter a valid name for {self.item_type} with in {self.item.parent}: ")
+            name = input(f"Enter a valid name for {self.item_type} with in {parent}: ")
 
         return name
 

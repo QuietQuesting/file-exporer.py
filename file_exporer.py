@@ -7,8 +7,8 @@
 
 import os
 import pathlib
-
 import configparser
+
 import output
 import user_prompt
 
@@ -61,12 +61,12 @@ def main() -> None:
 
             else:
                 # turns selected indexes to Path objects
-                paths = [pathlib.Path(os.listdir(directory)[item-1]) for item in user_input]
+                paths = [pathlib.Path(directory / os.listdir(directory)[item-1]) for item in user_input]
                 option_inst.select(paths)
 
         else:
             print("You didn't select a folder.", end=' ')
-            choice = input("Do you want to exit? (y)")
+            choice = input("Exit file explorer (y): ")
             if choice.lower() == "y":
                 break
 
