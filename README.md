@@ -1,12 +1,11 @@
 # Python Comandline Fileexporer by QuietQuesting
 
-![banner](https://user-images.githubusercontent.com/73032440/97810544-eba25300-1c74-11eb-87ed-7de2b34c0a55.png)
-
+![new_banner](https://user-images.githubusercontent.com/73032440/107846245-75b89680-6de2-11eb-8bcd-84bd30e672a0.png)
 ### Features:
 - Traverse through you computers files as you wish with a classical comand line interface and intuitve text control
 - High level file operations such as: create, copy, move, move to bin, direct delete for files and folders
 - Single and easy multiple select
-- Function which prompts user to select x amount of files / directories 
+- Function which prompts user to select x amount of files/directories 
 - Config file for start directory and quick access points
 
 	
@@ -19,18 +18,13 @@ The delete function moves, if possible files to the paper bin. In case that is n
 
 Thanks for reading.
 
-ToDo:
-- [x] Copy
-- [x] Move
-- [x] Create
-- [x] Delete  
+Stopped working on this for now, so here is what still needs to be done:
 - [ ] Quick Access Points
-- [x] Fix inconsistency with '/' and '\\' in paths
 - [ ] Stop bugs going brrrrrr
-- [ ] Do manual testing
-- [ ] Write Tests
-- [ ] Standalone select function / class
+- [ ] Fix easy multiselect (doesn't pass tests)
+- [ ] Test multiselect module within file exploer
+- [ ] Standalone function/class that prompts user to select x amount of files/directories 
 
 <div>The Icons made from <a href="http://www.onlinewebfonts.com/icon">Icon Fonts</a> are licensed by CC BY 3.0</div>
 The Icons along with the text are combined and colored by me!
-[Used this python color scheme](https://www.schemecolor.com/python-logo-colors.php)
+I used this [color_scheme](https://www.schemecolor.com/python-logo-colors.php).
